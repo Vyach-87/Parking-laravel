@@ -20,7 +20,7 @@
           dataType : 'html',
           success : function()
           {
-            $("information").text('HOOORAY!');
+            $("information").text('TEST!');
           }
         })
       }); // change
