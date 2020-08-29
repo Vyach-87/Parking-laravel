@@ -8,29 +8,35 @@
   <script type="text/javascript">
     $(document).ready(function(){
       $('#Clients_row').change(function(){
-        $('#Cars_row option').remove();
-        var id = $(this).val();
+        $('#Cars_row option').remove(); // OK!
+        var phone = $(this).val(); // OK!
         $.ajax({
+          cache : false,
           url : "{{ route('select_car')}}",
           data : {
-            //"_token" : "{{ csrf_token() }}",
-            "id": id
+            _token : "{{ csrf_token() }}",
+            phone: phone
           },
           type: 'post',
-          dataType : 'html',
-          success : function()
+          dataType : 'json',
+          success: function(result)
           {
-            $("information").text('TEST!');
-          }
+            $.each( result, function(key, value) {
+                  $('#Cars_row').append($('<option>', {key:key, text:value}));
+             });
+          },
+          error: function(xhr, status, error) {
+            alert(xhr.responseText + '|\n' + status + '|\n' +error);
+         }
         })
       }); // change
     }); // ready
   </script>
 
-  <form class="form_new" action='#' method='post'>
+  <form class="form_new" action="{{ route('go_to_park') }}" method='get'>
+    <label>Поместить автомобиль на парковку:</label>
     <div class="form-row align-items-center">
       <div class="col-auto my-1">
-
         <select class="custom-select mr-sm-2" name="Clients_row" id="Clients_row" >
           <option selected>Клиенты</option>
           @foreach($Clients as $Client)
@@ -42,12 +48,10 @@
       <div class="col-auto my-1">
         <select class="custom-select mr-sm-2" name="Cars_row" id="Cars_row">
           <option selected>Автомобили</option>
-          <option value='1'> #1</option>
-          <option value='2'> #2</option>
         </select>
       </div>
       <div class="col-auto my-1">
-        <button type="submit" class="btn btn-primary">Поместить на парковку</button>
+        <button type="submit" class="btn btn-primary">На парковку</button>
       </div>
     </div>
   </form>

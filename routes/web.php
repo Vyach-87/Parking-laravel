@@ -22,4 +22,6 @@ Route::get('/map', 'myController@show_Map')->name('parking_map');
 // Parking Map - Car Out
 Route::get('/map/{car_id}/out', 'myController@car_out')->name('away_from_park');
 // Parking Map - Client-Car Select
-Route::get('/map/select_car', 'myController@select_car')->name('select_car');
+Route::post('/map/select_car', 'myController@select_car')->name('select_car');
+// Parking Map - Car In
+Route::get('/map/car_in', 'myController@car_in')->name('go_to_park');

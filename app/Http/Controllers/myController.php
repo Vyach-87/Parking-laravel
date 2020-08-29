@@ -107,7 +107,7 @@ class myController extends Controller
     $Car_data = Car::orderBy('mark')->get();
     return view('map', ['Clients' => $Client_data], ['Cars' => $Car_data]);
   }
-  // Показ Карты парковки
+  // Убрать автомобиль с парковки
   public function car_out($car_id) {
     $car = Car::find($car_id);
     $car->park_flag = 'N';
@@ -116,10 +116,29 @@ class myController extends Controller
   }
   // Выбор Клиента select
   public function select_car(Request $req) {
-    //$phone = $req->input('Clients_row');
-    //$client=Client::where('phone','=', $req->get('id') )->get());
-
-    $cars = Car::where('phone','=',$req->get('id') )->get();
-    dd($cars);
+    $cars = Car::where('phone','=',$req->get('phone'))->where('park_flag','=','N')->get();
+    $output = [];
+    foreach( $cars as $car )
+    {
+       $output[$car->g_num] = $car->g_num;
+    }
+    return $output;
   }
+  // Поместить автомобиль на парковку
+  public function car_in(Request $req) {
+    $car_id = $req->input('Cars_row');
+    $client_id = $req->input('Clients_row');
+    if (($car_id=='Автомобили')||($car_id=='')) {
+      if ($client_id=='Клиенты'){
+        return redirect()->route('parking_map')->with('warning', "Сначала выберите Клиента из списка!");
+      } else {
+        return redirect()->route('parking_map')->with('success', "Все автомобили клиента уже на парковке!");
+      }
+    }
+    $car = Car::find($car_id);
+    $car->park_flag = 'Y';
+    $car->save();
+    return redirect()->route('parking_map')->with('success', "Автомобиль $car_id помещен на парковку!");
+  }
+
 }
